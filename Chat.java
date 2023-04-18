@@ -7,6 +7,24 @@ public class Chat {
     private static ObjectOutputStream outputStream; //stream write to the socket
     private static ObjectInputStream inputStream;
 
+
+    private static void receiveFile(String fileName){
+			try{
+				int bytes = 0;
+				FileOutputStream fileOutputStream= new FileOutputStream(fileName);
+				long size=inputStream.readLong();
+				byte[] buffer = new byte[1000];
+				while (size > 0 && (bytes = inputStream.read(buffer, 0,(int)Math.min(buffer.length, size)))!= -1) {
+					fileOutputStream.write(buffer, 0, bytes);
+					size = size-bytes; 
+				}
+				fileOutputStream.close();
+			}
+			catch(IOException ioException){
+				ioException.printStackTrace();
+			}
+	
+		}
     public static void main(String[] args) throws Exception {
 
         ServerSocket serverSocket = new ServerSocket(0);
@@ -31,6 +49,8 @@ public class Chat {
                     String[] messageArr = messageFromClient.split(" ");
                     System.out.println(messageFromClient);
                     if (messageArr[0].equals("transfer")) {
+                      //receive
+                      receiveFile("new" + messageArr[1]);
                     }
         
 
@@ -46,11 +66,45 @@ public class Chat {
     }
     
       private static class WritingThread extends Thread {
-        private ObjectOutputStream outputStream; //stream write to the socket
+        private static ObjectOutputStream outputStream; //stream write to the socket
         private ObjectInputStream inputStream;
         private int no;
   
+        // sendFile function define here
+        private static void sendFile(String path){
+          try{
+            int bytes = 0;
+            File file = new File(path);
+            
+            try{
+              if(file.exists()){
+                System.out.println("File Found");
+                FileInputStream fileInputStream = new FileInputStream(file);
+          
+                outputStream.writeLong(file.length());
+                byte[] buffer = new byte[1000];
+                while ((bytes = fileInputStream.read(buffer))!= -1) {
+                  outputStream.write(buffer, 0, bytes);
+                  outputStream.flush();
+                }
+                fileInputStream.close();
+                System.out.println("File Sent to the Server");
 
+              }
+              else{
+                System.out.println("File not Found");
+                throw new FileNotFoundException();
+              }
+            }
+            catch (FileNotFoundException e) {
+              System.out.println("Error: File not found.");
+            }
+          }
+          catch(IOException ioException){
+            ioException.printStackTrace();
+          } 
+
+        }
         
         public void run() {
           try {
@@ -69,9 +123,12 @@ public class Chat {
                 while ((message = reader.readLine()) != null) {
                   String[] messageArr = message.split(" ");
                   // System.out.println("message: " + messageArr[0]);
-                  if (messageArr[0].equals("transfer")) {                 
-                  }
                   outputStream.writeObject(message);
+                  if (messageArr[0].equals("transfer")) {     
+                    //send   
+                    sendFile(messageArr[1]);
+                          
+                  }
                 }
             } catch (Exception e) {
               System.err.println("Connection closed after file transfer was complete" + e.getMessage());
