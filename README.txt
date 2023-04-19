@@ -4,7 +4,8 @@
 
 # Project 3 - Internet Chatting
 
-#Step 1: java Chat.java to run chat program 
+#Step 1: javac Chat.java to compile chat program 
+# java Chat to run the program 
 # run this command twice to have the program run twice, simulating the two users Alice and Bob 
 
 #Step 2: input Alice (program1) port number into bobs (program2) chat, and input bobs (program2) port #number into Alices (program1) chat, to establish connection between two programs 
