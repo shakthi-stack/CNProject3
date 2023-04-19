@@ -30,11 +30,9 @@ public class Chat {
         ServerSocket serverSocket = new ServerSocket(0);
         int bobPort = serverSocket.getLocalPort();
         int clientNum = 1;
-        System.out.println("Person"+clientNum+" is listening on port " + bobPort);
+        System.out.println("Program is listening on port " + bobPort);
         try {
-          System.out.println("0");
             new WritingThread().start();
-            System.out.println("1");
 
             connection = serverSocket.accept();
 
@@ -108,13 +106,12 @@ public class Chat {
         
         public void run() {
           try {
-            System.out.println("3");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter port number to connect to the other Person: ");
             int AlicePort = Integer.parseInt(reader.readLine());
             Socket AliceSocket = new Socket("localhost", AlicePort);
-            System.out.println("Connected to client on port4 " + AlicePort);
+            System.out.println("Connected to client on port" + AlicePort);
             outputStream = new ObjectOutputStream(AliceSocket.getOutputStream()); 
             outputStream.flush();
             // PrintWriter out = new PrintWriter(AliceSocket.getOutputStream(), true);
