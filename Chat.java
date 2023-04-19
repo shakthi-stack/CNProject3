@@ -45,7 +45,7 @@ public class Chat {
                 while (true) {
                     messageFromClient = (String) inputStream.readObject();
                     String[] messageArr = messageFromClient.split(" ");
-                    System.out.println(messageFromClient);
+                    System.out.println("Recieved:"+messageFromClient);
                     if (messageArr[0].equals("transfer")) {
                       //receive
                       receiveFile("new" + messageArr[1]);
